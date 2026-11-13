@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{{ feature.name }} — Salt{% endblock %}
+{% block body %}
+<p class="crumbs"><a href="/">Board</a> / {{ feature.project }} / {{ feature.name }}</p>
+<h1>{{ feature.name }}</h1>
+<p class="muted">
+  {{ feature.file_path }} · {{ coverage.total }} ACIDs ·
+  {{ coverage.with_code }} cited in code · {{ coverage.with_tests }} cited in tests
+  {% if feature.draft %}<span class="pill muted">draft</span>{% endif %}
+</p>
+
+<h2 id="phases">Phases</h2>
+<ul class="phases">
+  {% for phase in phases %}
+  <li class="state-{{ phase.state }}">
+    <span class="phase-name">{{ phase.name }}</span>
+    <span class="phase-state">{{ phase.state }}</span>
+    {% if phase.gate and phase.state != 'done' %}
+      <form method="post" action="/features/{{ feature.id }}/approve" class="inline">
+        <input type="hidden" name="gate" value="{{ phase.name }}">
+        <input type="hidden" name="decision" value="approved">
+        <input type="text" name="note" placeholder="note (optional)">
+        <button type="submit">Approve</button>
+      </form>
+      <form method="post" action="/features/{{ feature.id }}/approve" class="inline">
+        <input type="hidden" name="gate" value="{{ phase.name }}">
+        <input type="hidden" name="decision" value="rejected">
+        <button type="submit" class="plain">Reject</button>
+      </form>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+<h2>Acceptance criteria</h2>
+<table class="acids">
+  <thead>
+    <tr><th>ACID</th><th>Requirement</th><th>Code</th><th>Tests</th></tr>
+  </thead>
+  <tbody>
+  {% for acid in acids %}
+    {% set count = counts.get(acid.id, {}) %}
+    <tr>
+      <td class="mono" data-label="ACID">{{ acid.id }}</td>
+      <td data-label="Requirement">{{ acid.text }}</td>
+      <td data-label="Code">{{ count.get('code', 0) }}</td>
+      <td data-label="Tests">
+        {{ count.get('test', 0) }}
+        {% if not count.get('test', 0) %}<span class="pill warn">untested</span>{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Receipts</h2>
+{% if receipts %}
+<table class="receipts">
+  <thead><tr><th>When</th><th>Phase</th><th>Command</th><th>Exit</th><th>SHA</th><th>Actor</th></tr></thead>
+  <tbody>
+  {% for receipt in receipts %}
+    <tr>
+      <td data-label="When" class="mono">{{ receipt.created_at }}</td>
+      <td data-label="Phase">{{ receipt.phase }}</td>
+      <td data-label="Command" class="mono wrap">{{ receipt.command }}</td>
+      <td data-label="Exit" class="{{ 'good' if receipt.exit_code == 0 else 'bad' }}">{{ receipt.exit_code }}</td>
+      <td data-label="SHA" class="mono">{{ (receipt.commit_sha or '-')[:10] }}</td>
+      <td data-label="Actor">{{ receipt.actor or '-' }}</td>
+    </tr>
+    {% if receipt.output_tail %}
+    <tr class="tail-row"><td colspan="6"><pre>{{ receipt.output_tail }}</pre></td></tr>
+    {% endif %}
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No receipts yet. Evidence is what makes a phase done.</p>
+{% endif %}
+
+<h2>Approvals</h2>
+{% if approvals %}
+<ul class="approvals">
+  {% for approval in approvals %}
+  <li>
+    <strong>{{ approval.gate }}</strong> {{ approval.decision }}
+    <span class="muted">by {{ approval.actor }} via {{ approval.channel }} at {{ approval.created_at }}</span>
+    {% if approval.note %}<div class="muted">{{ approval.note }}</div>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty">No approvals recorded.</p>
+{% endif %}
+
+<h2>Runs</h2>
+{% if runs %}
+<table class="runs">
+  <thead><tr><th>When</th><th>Phase</th><th>Role</th><th>Exit</th><th>Brief</th></tr></thead>
+  <tbody>
+  {% for run in runs %}
+    <tr>
+      <td data-label="When" class="mono">{{ run.started_at }}</td>
+      <td data-label="Phase">{{ run.phase }}</td>
+      <td data-label="Role">{{ run.role }}</td>
+      <td data-label="Exit">{{ run.exit_code if run.exit_code is not none else 'running' }}</td>
+      <td data-label="Brief" class="mono wrap">{{ run.log_path or '-' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">The coordinator has not dispatched this feature.</p>
+{% endif %}
+{% endblock %}

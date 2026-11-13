@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Roster — Salt{% endblock %}
+{% block body %}
+<h1>Roster</h1>
+<p class="muted">A role owns phases. A bot instance is whatever runs a role's command.</p>
+
+<table class="roster">
+  <thead><tr><th>Role</th><th>Owns</th><th>Runner</th><th>Running</th></tr></thead>
+  <tbody>
+  {% for role in profile.roles %}
+    <tr>
+      <td data-label="Role">
+        <strong>{{ role.name }}</strong>
+        {% if role.coordinator %}<span class="pill good">coordinator</span>{% endif %}
+      </td>
+      <td data-label="Owns">{{ owners.get(role.name, []) | join(', ') or '—' }}</td>
+      <td data-label="Runner" class="mono wrap">{{ role.runner }}</td>
+      <td data-label="Running">{{ load.get(role.name, 0) }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Gates</h2>
+<ul class="gates">
+  {% for gate in profile.gates %}
+    <li><strong>{{ gate }}</strong> — approvals only; no bot can satisfy it.</li>
+  {% endfor %}
+</ul>
+
+<h2>Stranded</h2>
+<p class="muted">A unit that lapses {{ threshold }} times, or is blocked, is surfaced rather than retried.</p>
+{% endblock %}

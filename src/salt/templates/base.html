@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Salt{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="/">Salt</a>
+    <nav>
+      <a href="/" class="{{ 'on' if page == 'board' else '' }}">Board</a>
+      <a href="/queue" class="{{ 'on' if page == 'queue' else '' }}">Queue</a>
+      <a href="/roster" class="{{ 'on' if page == 'roster' else '' }}">Roster</a>
+      <a href="/coordinator" class="{{ 'on' if page == 'coordinator' else '' }}">Coordinator</a>
+      <a href="/activity" class="{{ 'on' if page == 'activity' else '' }}">Activity</a>
+    </nav>
+    <span class="pill {{ 'good' if dispatch_enabled else 'muted' }}">
+      {{ 'dispatching' if dispatch_enabled else 'dispatch off' }} · {{ interval }}s
+    </span>
+  </header>
+  <main>
+    {% block body %}{% endblock %}
+  </main>
+  <footer>
+    Salt {{ profile.name }} profile · {{ projects|length }} project(s)
+  </footer>
+</body>
+</html>

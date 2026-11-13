@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Board — Salt{% endblock %}
+{% block body %}
+<h1>Pipeline board</h1>
+
+{% if not rows %}
+  <p class="empty">
+    No features yet. Register a repository and scan it:
+    <code>salt ingest /path/to/repo</code>
+  </p>
+{% endif %}
+
+{% for project in projects %}
+  <section class="project">
+    <h2>{{ project.name }} <span class="muted">{{ project.repo_path }}</span></h2>
+    {% set project_rows = rows | selectattr('feature.project', 'equalto', project.name) | list %}
+    {% if not project_rows %}
+      <p class="empty">No specs found in this repository yet.</p>
+    {% else %}
+    <table class="board">
+      <thead>
+        <tr>
+          <th class="sticky-col">Feature</th>
+          {% for name in profile.phase_names %}
+            {% set definition = profile.phase(name) %}
+            <th>
+              {{ name }}
+              <span class="owner">{{ definition.owner if definition else '' }}</span>
+            </th>
+          {% endfor %}
+          <th>Tests</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in project_rows %}
+        <tr>
+          <td class="sticky-col feature-cell" data-label="Feature">
+            <a href="/features/{{ row.feature.id }}">{{ row.feature.name }}</a>
+            {% if row.feature.draft %}<span class="pill muted">draft</span>{% endif %}
+          </td>
+          {% for cell in row.cells %}
+            <td data-label="{{ cell.name }}">
+              <a class="cell state-{{ cell.state }}" href="/features/{{ row.feature.id }}#phases"
+                 title="{{ cell.name }} · {{ cell.owner }} · {{ cell.state }}">
+                {{ cell.state }}
+              </a>
+            </td>
+          {% endfor %}
+          <td data-label="Tests">
+            {{ row.coverage.with_tests }}/{{ row.coverage.total }}
+            {% if row.coverage.untested %}<span class="pill warn">{{ row.coverage.untested }} untested</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </section>
+{% endfor %}
+{% endblock %}

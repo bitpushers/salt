@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Coordinator — Salt{% endblock %}
+{% block body %}
+<h1>Coordinator</h1>
+
+{% if result %}
+  <section class="callout">
+    <h2>Last manual tick</h2>
+    <p>
+      enabled: <strong>{{ result.get('enabled') }}</strong> ·
+      dispatched: {{ result.get('dispatched')|length }} ·
+      finished: {{ result.get('finished')|length }} ·
+      expired leases: {{ result.get('expired')|length }}
+    </p>
+    {% if result.get('error') %}<p class="bad">{{ result.get('error') }}</p>{% endif %}
+    {% for item in result.get('dispatched', []) %}
+      <p class="mono">{{ item.unit }} → {{ item.role }} (run {{ item.run_id }})</p>
+    {% endfor %}
+    {% for item in result.get('skipped', []) %}
+      <p class="mono muted">{{ item.unit }} skipped: {{ item.why }}</p>
+    {% endfor %}
+  </section>
+{% endif %}
+
+<form method="post" action="/coordinator/settings" class="settings">
+  <label>
+    Interval (seconds)
+    <input type="number" name="interval" min="15" step="15" value="{{ interval }}">
+  </label>
+  <label>
+    Concurrency per role
+    <input type="number" name="concurrency" min="1" max="16" value="{{ concurrency }}">
+  </label>
+  <label class="check">
+    <input type="checkbox" name="enabled" value="on" {% if dispatch_enabled %}checked{% endif %}>
+    Dispatch work to runners
+  </label>
+  <div class="actions">
+    <button type="submit">Save</button>
+  </div>
+</form>
+<p class="muted">
+  Dispatch is off until you enable it. Last tick: {{ last_tick or 'never' }}.
+</p>
+
+<form method="post" action="/coordinator/run-now">
+  <button type="submit">Run now</button>
+</form>
+<p class="muted">
+  The coordinator leases a unit, writes a brief, and starts that role's runner command
+  with <code>{brief}</code> replaced by the brief's path. A run exiting clean still has to
+  prove its phase with <code>salt prove</code>.
+</p>
+
+<h2>Recent runs</h2>
+{% if runs %}
+<table>
+  <thead><tr><th>Started</th><th>Feature</th><th>Phase</th><th>Role</th><th>Exit</th><th>Log</th></tr></thead>
+  <tbody>
+  {% for run in runs %}
+    <tr>
+      <td data-label="Started" class="mono">{{ run.started_at }}</td>
+      <td data-label="Feature"><a href="/features/{{ run.feature_id }}">{{ run.feature_name }}</a></td>
+      <td data-label="Phase">{{ run.phase }}</td>
+      <td data-label="Role">{{ run.role }}</td>
+      <td data-label="Exit">{{ run.exit_code if run.exit_code is not none else 'running' }}</td>
+      <td data-label="Log" class="mono wrap">{{ run.log_path or '-' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No runs yet.</p>
+{% endif %}
+{% endblock %}

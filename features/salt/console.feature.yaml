@@ -1,0 +1,58 @@
+feature:
+  name: console
+  product: salt
+  draft: false
+  description: |
+    The web console: where work stands, who owns it, and what the coordinator is doing.
+
+components:
+  BOARD:
+    name: Pipeline board
+    description: Every feature across every project, by phase.
+    requirements:
+      1: The board lists features from all registered projects, grouped by project
+      2: A phase cell shows pending, started, blocked, done, or a gate awaiting a human
+      3: Each phase column heading names the role that owns it
+  DETAIL:
+    name: Feature detail
+    description: One feature in full.
+    requirements:
+      1: The detail page lists every ACID with its state and its reference counts
+      2: The detail page shows receipts with their command, exit code and actor
+      3: The detail page shows the approval history
+  ROSTER_VIEW:
+    name: Roster view
+    description: Who owns what.
+    requirements:
+      1: The roster page lists roles, the phases each owns, and the runner command
+      2: The roster page marks the coordinator role
+  QUEUE:
+    name: Queue view
+    description: The coordinator's picture of what is next.
+    requirements:
+      1: The queue lists eligible units and the role that owns each
+      2: The queue lists live leases with their expiry
+      3: The queue lists stranded or blocked units so a stuck roster is visible
+  SETTINGS:
+    name: Coordinator settings
+    description: Cadence and dispatch controls, editable from the console.
+    requirements:
+      1: The coordinator page shows the interval currently in force
+      2: An interval submitted from the page is persisted and used by the next tick
+      3: The page can disable dispatch entirely
+      4: The page can trigger one tick immediately
+  ACTIVITY:
+    name: Activity feed
+    description: The append-only history.
+    requirements:
+      1: The activity page lists events newest first
+      2: An event names its kind and subject
+
+constraints:
+  SAFARI:
+    name: Safari and iPad
+    description: The console is used from an iPad.
+    requirements:
+      1: Every page renders without JavaScript
+      2: Interactive targets are at least 44 pixels in one dimension
+      3: Tables collapse to stacked cards below 900 pixels wide

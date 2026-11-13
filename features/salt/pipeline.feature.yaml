@@ -1,0 +1,54 @@
+feature:
+  name: pipeline
+  product: salt
+  draft: false
+  description: |
+    The phase machine, its evidence rules, the roster, and the coordinator. A feature's
+    position is derived from receipts and approvals; nothing advances on an assertion.
+
+components:
+  PHASE:
+    name: Phase machine
+    description: Ordered phases defined by a profile, per feature.
+    requirements:
+      1: A phase becomes done only when a receipt for it exists with exit code zero
+      2: A phase cannot be done while an earlier phase for the same feature is not done
+      3: A blocked phase can be set from any state and clears only when a new receipt arrives
+      4: A phase claimed by a role that does not own it in the profile is refused
+  GATE:
+    name: Human gates
+    description: Phases that only a human decision can satisfy.
+    requirements:
+      1: A gate phase advances only on an approval record, never on a receipt
+      2: An approval records the channel it arrived on, web or cli
+      3: A phase after an unsatisfied gate is not eligible for dispatch
+  RECEIPT:
+    name: Receipts
+    description: Evidence attached to a phase.
+    requirements:
+      1: A receipt records the command, its working directory, its exit code and the HEAD commit
+      2: A receipt records the actor and role that produced it
+      3: A receipt whose command exits non-zero is stored but never satisfies a phase
+  CLAIM:
+    name: Leases
+    description: Advisory locks so two bots do not take the same unit.
+    requirements:
+      1: A claim has an expiry and hides its unit from eligibility until it expires
+      2: Only one live claim per unit may exist
+      3: A claim records the role and actor that took it
+  ROSTER:
+    name: Roster
+    description: Roles, their ownership, and how a role is started.
+    requirements:
+      1: A profile declares exactly one coordinator role
+      2: Each role declares the phases it owns and a runner command template
+      3: A runner command template accepts a brief path substitution
+
+constraints:
+  PORTABILITY:
+    name: Portability
+    description: Salt works the same on any machine and with any harness.
+    requirements:
+      1: No module outside src/salt/adapters refers to a named agent harness
+      2: No module references an absolute home directory path
+      3: The database is rebuildable from the scanned repository except for runs, approvals and events

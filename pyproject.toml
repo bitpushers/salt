@@ -1,0 +1,42 @@
+[project]
+name = "saltsh"
+version = "0.1.0"
+description = "Salt — a local, spec-driven build system with a bot roster, receipts, and gates."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+  "jinja2>=3.1",
+  "pyyaml>=6.0",
+  "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.6"]
+
+[project.scripts]
+salt = "salt.cli:main"
+saltsh = "salt.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/salt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: touches a real repo on this machine"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF059"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["F841", "SIM102", "SIM115", "UP031"]

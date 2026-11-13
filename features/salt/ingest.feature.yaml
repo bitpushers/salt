@@ -1,0 +1,40 @@
+feature:
+  name: ingest
+  product: salt
+  draft: false
+  description: |
+    Reading specs out of a repository and finding where their ACIDs are cited.
+
+components:
+  SPEC:
+    name: Spec parsing
+    description: features/**/*.feature.yaml becomes features and ACIDs.
+    requirements:
+      1: Each file under features/ with a .feature.yaml suffix becomes one feature
+      2: Component groups become ACIDs named feature.GROUP.n
+      3: Constraint groups become ACIDs on the same feature
+      4: A requirement may carry a note, a deprecated flag, or a replaced_by list
+      5: A feature file's draft flag is recorded
+  REFS:
+    name: Reference scanning
+    description: Where each ACID is cited in code and tests.
+    requirements:
+      1: An ACID at the start of a standalone comment line is recorded as a code reference
+      2: An ACID appended to a line of code after the code is not recorded
+      3: A JSON source may list ACIDs in a top-level _acid array and each is recorded
+      4: A reference inside a path containing tests or a filename starting test_ is recorded as a test reference
+  INGEST:
+    name: Ingest command
+    description: The scan that ties a repository to the database.
+    requirements:
+      1: Ingest records the content hash of each spec file
+      2: Re-ingesting a changed spec updates its ACIDs without duplicating them
+      3: Ingesting a repository removes features that no longer have a spec file
+
+constraints:
+  IDENTITY:
+    name: No personal data
+    description: Salt's database must never accumulate other projects' user data.
+    requirements:
+      1: The schema stores no unbounded free-text column other than spec text, commands, notes and descriptions
+      2: No email address, token or credential is persisted by ingest

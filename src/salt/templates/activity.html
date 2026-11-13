@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Activity — Salt{% endblock %}
+{% block body %}
+<h1>Activity</h1>
+<p class="muted">Append-only. Newest first.</p>
+
+{% if events %}
+<table class="events">
+  <thead><tr><th>When</th><th>Kind</th><th>Subject</th><th>Detail</th></tr></thead>
+  <tbody>
+  {% for event in events %}
+    <tr>
+      <td data-label="When" class="mono">{{ event.ts }}</td>
+      <td data-label="Kind"><span class="pill">{{ event.kind }}</span></td>
+      <td data-label="Subject" class="mono wrap">{{ event.subject }}</td>
+      <td data-label="Detail">{{ event.detail }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">Nothing has happened yet.</p>
+{% endif %}
+{% endblock %}

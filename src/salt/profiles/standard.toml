@@ -1,0 +1,85 @@
+# The default workflow profile: the ten phases we actually use, the roster that owns
+# them, and the gates only a human can pass.
+#
+# `runner` is a command template. {brief} is replaced with the path of the brief Salt
+# writes for the unit. The default prints the brief into the run log, which is a
+# harmless way to see dispatch working before you point it at a real agent.
+
+[profile]
+name = "standard"
+
+[roster]
+coordinator = "coordinator"
+default_interval_seconds = 300
+default_concurrency = 1
+
+[[role]]
+name = "coordinator"
+runner = "cat {brief}"
+coordinator = true
+
+[[role]]
+name = "author"
+runner = "cat {brief}"
+
+[[role]]
+name = "implementer"
+runner = "cat {brief}"
+
+[[role]]
+name = "verifier"
+runner = "cat {brief}"
+
+[[role]]
+name = "committer"
+runner = "cat {brief}"
+
+[[phase]]
+name = "intake"
+owner = "author"
+gate = false
+
+[[phase]]
+name = "spec"
+owner = "author"
+gate = false
+
+[[phase]]
+name = "gaps"
+owner = "human"
+gate = true
+
+[[phase]]
+name = "spec_push"
+owner = "author"
+gate = false
+
+[[phase]]
+name = "implement"
+owner = "implementer"
+gate = false
+
+[[phase]]
+name = "tests"
+owner = "implementer"
+gate = false
+
+[[phase]]
+name = "verify"
+owner = "verifier"
+gate = false
+
+[[phase]]
+name = "commit"
+owner = "committer"
+gate = false
+
+[[phase]]
+name = "sync"
+owner = "committer"
+gate = false
+
+[[phase]]
+name = "review"
+owner = "human"
+gate = true

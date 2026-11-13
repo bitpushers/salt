@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Queue — Salt{% endblock %}
+{% block body %}
+<h1>Queue</h1>
+<p class="muted">
+  Eligible means: every earlier phase is done, any gate before it is approved, it is not
+  blocked, and nobody holds a live lease.
+</p>
+
+<h2>Eligible ({{ eligible|length }})</h2>
+{% if eligible %}
+<table>
+  <thead><tr><th>Project</th><th>Feature</th><th>Phase</th><th>Role</th></tr></thead>
+  <tbody>
+  {% for unit in eligible %}
+    <tr>
+      <td data-label="Project">{{ unit.project }}</td>
+      <td data-label="Feature"><a href="/features/{{ unit.feature_id }}">{{ unit.feature_name }}</a></td>
+      <td data-label="Phase">{{ unit.phase }}</td>
+      <td data-label="Role">{{ unit.role }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">Nothing eligible. Either everything is done, or something is waiting on you.</p>
+{% endif %}
+
+<h2>Waiting on a human ({{ waiting|length }})</h2>
+{% if waiting %}
+<table>
+  <thead><tr><th>Feature</th><th>Phase</th><th>Why</th></tr></thead>
+  <tbody>
+  {% for unit in waiting %}
+    <tr>
+      <td data-label="Feature"><a href="/features/{{ unit.feature_id }}">{{ unit.feature_name }}</a></td>
+      <td data-label="Phase">{{ unit.phase }}</td>
+      <td data-label="Why">{{ unit.reason }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">Nothing waiting.</p>
+{% endif %}
+
+<h2>Live leases ({{ claims|length }})</h2>
+{% if claims %}
+<table>
+  <thead><tr><th>Feature</th><th>Phase</th><th>Role</th><th>Expires</th></tr></thead>
+  <tbody>
+  {% for claim in claims %}
+    <tr>
+      <td data-label="Feature"><a href="/features/{{ claim.feature_id }}">{{ claim.feature_name }}</a></td>
+      <td data-label="Phase">{{ claim.phase }}</td>
+      <td data-label="Role">{{ claim.role }}</td>
+      <td data-label="Expires" class="mono">{{ claim.expires_at }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No live leases.</p>
+{% endif %}
+
+<h2>Stranded or blocked ({{ stranded|length }})</h2>
+{% if stranded %}
+<table>
+  <thead><tr><th>Feature</th><th>Phase</th><th>Reason</th></tr></thead>
+  <tbody>
+  {% for unit in stranded %}
+    <tr>
+      <td data-label="Feature"><a href="/features/{{ unit.feature_id }}">{{ unit.feature_name }}</a></td>
+      <td data-label="Phase">{{ unit.phase }}</td>
+      <td data-label="Reason" class="bad">{{ unit.reason }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">Nothing stranded.</p>
+{% endif %}
+{% endblock %}
