@@ -14,7 +14,7 @@
   {% for phase in phases %}
   <li class="state-{{ phase.state }}">
     <span class="phase-name">{{ phase.name }}</span>
-    <span class="phase-state">{{ phase.state }}</span>
+    <span class="phase-state state-{{ phase.state }}">{{ phase.state }}</span>
     {% if phase.gate and phase.state != 'done' %}
       <form method="post" action="/features/{{ feature.id }}/approve" class="inline">
         <input type="hidden" name="gate" value="{{ phase.name }}">
