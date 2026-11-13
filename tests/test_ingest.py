@@ -5,6 +5,7 @@ from salt.ingest import ingest_repository
 
 def test_content_hash_is_recorded(store, profile, repo):
     """ingest.INGEST.1"""
+    # ingest.INGEST.1
     ingest_repository(store, profile, "demo", repo)
     feature = store.find_feature("demo:demo")
     assert feature["content_hash"]
@@ -13,6 +14,7 @@ def test_content_hash_is_recorded(store, profile, repo):
 
 def test_reingest_updates_without_duplicating(store, profile, repo):
     """ingest.INGEST.2"""
+    # ingest.INGEST.2
     ingest_repository(store, profile, "demo", repo)
     first = len(store.acids("demo:demo"))
 
@@ -27,6 +29,7 @@ def test_reingest_updates_without_duplicating(store, profile, repo):
 
 def test_stale_features_are_removed(store, profile, repo):
     """ingest.INGEST.3"""
+    # ingest.INGEST.3
     ingest_repository(store, profile, "demo", repo)
     assert store.feature("demo:demo")
 

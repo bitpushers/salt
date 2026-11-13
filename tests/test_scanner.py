@@ -8,6 +8,7 @@ from salt.scanner import parse_spec, scan_refs, spec_paths
 
 def test_each_spec_file_becomes_a_feature(repo):
     """ingest.SPEC.1"""
+    # ingest.SPEC.1
     paths = spec_paths(repo)
     assert len(paths) == 1
     spec = parse_spec(paths[0])
@@ -16,6 +17,7 @@ def test_each_spec_file_becomes_a_feature(repo):
 
 def test_component_groups_become_acids(repo):
     """ingest.SPEC.2"""
+    # ingest.SPEC.2
     spec = parse_spec(spec_paths(repo)[0])
     assert "demo.GREETING.1" in spec.acid_ids
     assert "demo.GREETING.2" in spec.acid_ids
@@ -23,6 +25,7 @@ def test_component_groups_become_acids(repo):
 
 def test_constraint_groups_become_acids(repo):
     """ingest.SPEC.3"""
+    # ingest.SPEC.3
     spec = parse_spec(spec_paths(repo)[0])
     assert "demo.SAFE.1" in spec.acid_ids
     kinds = {acid.acid_id(spec.name): acid.kind for acid in spec.acids}
@@ -31,6 +34,7 @@ def test_constraint_groups_become_acids(repo):
 
 def test_notes_and_deprecations_parse(tmp_path):
     """ingest.SPEC.4"""
+    # ingest.SPEC.4
     path = tmp_path / "features" / "f.feature.yaml"
     path.parent.mkdir(parents=True)
     path.write_text(
@@ -58,6 +62,7 @@ components:
 
 def test_draft_flag_is_recorded(repo):
     """ingest.SPEC.5"""
+    # ingest.SPEC.5
     path = spec_paths(repo)[0]
     path.write_text(path.read_text().replace("draft: false", "draft: true"))
     assert parse_spec(path).draft is True
@@ -65,6 +70,7 @@ def test_draft_flag_is_recorded(repo):
 
 def test_standalone_comment_line_is_a_reference(repo):
     """ingest.REFS.1"""
+    # ingest.REFS.1
     known = {"demo.GREETING.1"}
     refs = scan_refs(repo, known)
     assert any(kind == "code" for _, _, _, kind in refs)
@@ -72,12 +78,14 @@ def test_standalone_comment_line_is_a_reference(repo):
 
 def test_inline_trailing_comment_is_not_a_reference(tmp_path):
     """ingest.REFS.2"""
+    # ingest.REFS.2
     (tmp_path / "x.py").write_text("x = 1  # demo.GREETING.1\n")
     assert scan_refs(tmp_path, {"demo.GREETING.1"}) == []
 
 
 def test_json_acid_array_is_a_reference(tmp_path):
     """ingest.REFS.3"""
+    # ingest.REFS.3
     (tmp_path / "graph.json").write_text(
         json.dumps({"_acid": ["demo.GREETING.1 — a note"], "nodes": []})
     )
@@ -88,6 +96,7 @@ def test_json_acid_array_is_a_reference(tmp_path):
 
 def test_test_paths_are_classified_as_tests(repo):
     """ingest.REFS.4"""
+    # ingest.REFS.4
     refs = scan_refs(repo, {"demo.GREETING.1", "demo.GREETING.2"})
     kinds = {path: kind for _, path, _, kind in refs}
     assert kinds["tests/test_app.py"] == "test"

@@ -12,6 +12,9 @@ from . import pipeline, scanner
 from .store import Store
 
 
+# ingest.INGEST.1
+# ingest.INGEST.2
+# ingest.INGEST.3
 def ingest_repository(
     store: Store, profile: pipeline.Profile, project_name: str, repo_path: str | Path
 ) -> dict:

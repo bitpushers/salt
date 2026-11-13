@@ -7,6 +7,7 @@ from salt import config as config_mod
 
 def test_defaults_need_no_config_file(tmp_path, monkeypatch):
     """pipeline.PORTABILITY.3 — a fresh install works with no configuration."""
+    # pipeline.PORTABILITY.3
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "data"))
     monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
     config = config_mod.load(tmp_path / "missing.toml")

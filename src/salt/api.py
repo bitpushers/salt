@@ -83,6 +83,8 @@ def create_app(
 
     # -- pages ------------------------------------------------------------
     @app.get("/", response_class=HTMLResponse)
+    # console.BOARD.1
+    # console.BOARD.2
     def board(request: Request) -> HTMLResponse:
         """console.BOARD.1 / .2 / .3"""
         return templates.TemplateResponse(
@@ -90,6 +92,9 @@ def create_app(
         )
 
     @app.get("/features/{feature_id:path}", response_class=HTMLResponse)
+    # console.DETAIL.1
+    # console.DETAIL.2
+    # console.DETAIL.3
     def feature_detail(request: Request, feature_id: str) -> HTMLResponse:
         """console.DETAIL.1 / .2 / .3"""
         feature = store.find_feature(feature_id)
@@ -129,6 +134,8 @@ def create_app(
         )
 
     @app.get("/roster", response_class=HTMLResponse)
+    # console.ROSTER_VIEW.1
+    # console.ROSTER_VIEW.2
     def roster(request: Request) -> HTMLResponse:
         """console.ROSTER_VIEW.1 / .2"""
         load = {
@@ -144,6 +151,9 @@ def create_app(
         )
 
     @app.get("/queue", response_class=HTMLResponse)
+    # console.QUEUE.1
+    # console.QUEUE.2
+    # console.QUEUE.3
     def queue(request: Request) -> HTMLResponse:
         """console.QUEUE.1 / .2 / .3"""
         return templates.TemplateResponse(
@@ -160,6 +170,7 @@ def create_app(
         )
 
     @app.get("/coordinator", response_class=HTMLResponse)
+    # console.SETTINGS.1
     def coordinator_page(request: Request) -> HTMLResponse:
         """console.SETTINGS.1"""
         return templates.TemplateResponse(
@@ -176,6 +187,8 @@ def create_app(
         )
 
     @app.post("/coordinator/settings")
+    # console.SETTINGS.2
+    # console.SETTINGS.3
     def save_settings(
         interval: int = Form(...), concurrency: int = Form(1), enabled: str = Form("off")
     ) -> RedirectResponse:
@@ -191,6 +204,7 @@ def create_app(
         return RedirectResponse(url="/coordinator", status_code=303)
 
     @app.post("/coordinator/run-now", response_class=HTMLResponse)
+    # console.SETTINGS.4
     def run_now(request: Request) -> HTMLResponse:
         """console.SETTINGS.4"""
         result = daemon.tick() if daemon else {"error": "no coordinator in this process"}
@@ -231,6 +245,8 @@ def create_app(
         return RedirectResponse(url=f"/features/{feature['id']}", status_code=303)
 
     @app.get("/activity", response_class=HTMLResponse)
+    # console.ACTIVITY.1
+    # console.ACTIVITY.2
     def activity(request: Request) -> HTMLResponse:
         """console.ACTIVITY.1 / .2"""
         return templates.TemplateResponse(

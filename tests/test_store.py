@@ -84,6 +84,7 @@ def test_events_are_append_only_and_ordered(store: Store):
 
 def test_no_unbounded_free_text_columns(store: Store):
     """ingest.IDENTITY.1 — nothing here may accumulate another project's user data."""
+    # ingest.IDENTITY.1
     unexpected = set()
     with store.connect() as conn:
         tables = [
@@ -102,6 +103,7 @@ def test_no_unbounded_free_text_columns(store: Store):
 
 def test_no_identity_columns(store: Store):
     """ingest.IDENTITY.2 — no email, token or credential column exists."""
+    # ingest.IDENTITY.2
     with store.connect() as conn:
         tables = [
             row["name"]

@@ -8,6 +8,7 @@ from salt.receipts import git_sha, run_command
 
 def test_receipt_captures_command_cwd_exit_and_sha(git_repo):
     """pipeline.RECEIPT.1"""
+    # pipeline.RECEIPT.1
     receipt = run_command("true", cwd=git_repo)
     assert receipt.command == "true"
     assert receipt.cwd == str(git_repo)
@@ -17,6 +18,7 @@ def test_receipt_captures_command_cwd_exit_and_sha(git_repo):
 
 def test_actor_and_role_are_recorded(store):
     """pipeline.RECEIPT.2"""
+    # pipeline.RECEIPT.2
     store.add_receipt(
         "demo:demo", "implement", "pytest -q", "/tmp", 0, "abc", "digest", "tail",
         "implementer-1", "implementer",
@@ -28,6 +30,7 @@ def test_actor_and_role_are_recorded(store):
 
 def test_a_failing_command_cannot_satisfy_a_phase(wired):
     """pipeline.RECEIPT.3"""
+    # pipeline.RECEIPT.3
     store, profile, repo = wired
     feature_id = "demo:demo"
     receipt = run_command("false", cwd=repo)

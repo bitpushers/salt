@@ -15,6 +15,7 @@ def _sources() -> list[Path]:
 
 def test_no_module_names_a_harness():
     """pipeline.PORTABILITY.1 — adapters/ is the only place allowed to know a harness."""
+    # pipeline.PORTABILITY.1
     offenders = []
     for path in _sources():
         text = path.read_text().lower()
@@ -26,6 +27,7 @@ def test_no_module_names_a_harness():
 
 def test_no_module_hardcodes_a_home_directory():
     """pipeline.PORTABILITY.2"""
+    # pipeline.PORTABILITY.2
     offenders = []
     for path in _sources():
         text = path.read_text()

@@ -84,6 +84,11 @@ def spec_paths(repo: Path) -> list[Path]:
     return sorted(p for p in features_dir.rglob("*.feature.yaml") if p.is_file())
 
 
+# ingest.SPEC.1
+# ingest.SPEC.2
+# ingest.SPEC.3
+# ingest.SPEC.4
+# ingest.SPEC.5
 def parse_spec(path: Path) -> ParsedFeature:
     raw_bytes = path.read_bytes()
     data = yaml.safe_load(raw_bytes.decode("utf-8")) or {}
@@ -115,6 +120,7 @@ def parse_spec(path: Path) -> ParsedFeature:
     return parsed
 
 
+# ingest.REFS.4
 def _is_test_path(relative: Path) -> bool:
     parts = {part.lower() for part in relative.parts}
     if "tests" in parts or "test" in parts:
@@ -123,6 +129,8 @@ def _is_test_path(relative: Path) -> bool:
     return name.startswith("test_") or name.endswith("_test.py") or ".test." in name
 
 
+# ingest.REFS.1
+# ingest.REFS.2
 def _acid_comments(line: str) -> list[str]:
     stripped = line.lstrip()
     if not stripped.startswith(COMMENT_PREFIXES):
@@ -130,6 +138,7 @@ def _acid_comments(line: str) -> list[str]:
     return [m.group(1) for m in ACID_RE.finditer(stripped)]
 
 
+# ingest.REFS.3
 def _json_acids(text: str) -> list[str]:
     try:
         data = json.loads(text)

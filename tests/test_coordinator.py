@@ -28,6 +28,7 @@ def _clear_to_implement(store, profile):
 
 def test_an_eligible_unit_appears_once_gates_pass(wired):
     """console.QUEUE.1"""
+    # console.QUEUE.1
     store, profile, _ = wired
     _clear_to_implement(store, profile)
     units = coordinator.eligible(store, profile)
@@ -41,6 +42,7 @@ def _force_expiry(store):
 
 def test_a_live_lease_hides_the_unit_and_expiry_resurfaces_it(wired):
     """pipeline.CLAIM.1"""
+    # pipeline.CLAIM.1
     store, profile, _ = wired
     _clear_to_implement(store, profile)
     unit = _unit(store, profile)
@@ -55,6 +57,7 @@ def test_a_live_lease_hides_the_unit_and_expiry_resurfaces_it(wired):
 
 def test_only_one_live_claim_per_unit(wired):
     """pipeline.CLAIM.2"""
+    # pipeline.CLAIM.2
     store, profile, _ = wired
     _clear_to_implement(store, profile)
     unit = _unit(store, profile)
@@ -65,6 +68,7 @@ def test_only_one_live_claim_per_unit(wired):
 
 def test_a_claim_records_role_and_actor(wired):
     """pipeline.CLAIM.3"""
+    # pipeline.CLAIM.3
     store, profile, _ = wired
     _clear_to_implement(store, profile)
     coordinator.claim(store, profile, _unit(store, profile), actor="impl-1", ttl_seconds=600)
@@ -75,6 +79,7 @@ def test_a_claim_records_role_and_actor(wired):
 
 def test_a_gate_is_never_dispatchable(wired):
     """pipeline.GATE.3"""
+    # pipeline.GATE.3
     store, profile, _ = wired
     for phase in ("intake", "spec"):
         store.add_receipt("demo:demo", phase, "true", "/tmp", 0, None, None, "", "author", "author")

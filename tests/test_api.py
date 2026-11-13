@@ -46,6 +46,7 @@ def _advance(store, profile, feature_id="demo:demo"):
 
 def test_board_lists_features_from_every_project(app_client):
     """console.BOARD.1"""
+    # console.BOARD.1
     client, _, _ = app_client
     body = client.get("/").text
     assert "demo" in body and "other" in body
@@ -54,6 +55,7 @@ def test_board_lists_features_from_every_project(app_client):
 
 def test_board_shows_phase_states(app_client):
     """console.BOARD.2"""
+    # console.BOARD.2
     client, store, profile = app_client
     _advance(store, profile)
     body = client.get("/").text
@@ -63,6 +65,7 @@ def test_board_shows_phase_states(app_client):
 
 def test_board_columns_name_the_owning_role(app_client):
     """console.BOARD.3"""
+    # console.BOARD.3
     client, _, _ = app_client
     body = client.get("/").text
     assert "implementer" in body
@@ -71,6 +74,7 @@ def test_board_columns_name_the_owning_role(app_client):
 
 def test_detail_lists_acids_with_reference_counts(app_client):
     """console.DETAIL.1"""
+    # console.DETAIL.1
     client, _, _ = app_client
     body = client.get("/features/demo:demo").text
     assert "demo.GREETING.1" in body
@@ -79,6 +83,7 @@ def test_detail_lists_acids_with_reference_counts(app_client):
 
 def test_detail_shows_receipts(app_client):
     """console.DETAIL.2"""
+    # console.DETAIL.2
     client, store, profile = app_client
     store.add_receipt(
         "demo:demo",
@@ -99,6 +104,7 @@ def test_detail_shows_receipts(app_client):
 
 def test_detail_shows_approvals(app_client):
     """console.DETAIL.3"""
+    # console.DETAIL.3
     client, store, profile = app_client
     pipeline.approve(store, profile, "demo:demo", "gaps", "approved", note="looks right", actor="human", channel="web")
     body = client.get("/features/demo:demo").text
@@ -107,6 +113,7 @@ def test_detail_shows_approvals(app_client):
 
 def test_roster_lists_roles_and_runners(app_client):
     """console.ROSTER_VIEW.1"""
+    # console.ROSTER_VIEW.1
     client, _, _ = app_client
     body = client.get("/roster").text
     assert "implementer" in body
@@ -115,6 +122,7 @@ def test_roster_lists_roles_and_runners(app_client):
 
 def test_roster_marks_the_coordinator(app_client):
     """console.ROSTER_VIEW.2"""
+    # console.ROSTER_VIEW.2
     client, _, _ = app_client
     body = client.get("/roster").text
     assert "coordinator" in body
@@ -122,6 +130,7 @@ def test_roster_marks_the_coordinator(app_client):
 
 def test_queue_lists_eligible_units(app_client):
     """console.QUEUE.1"""
+    # console.QUEUE.1
     client, store, profile = app_client
     _advance(store, profile)
     body = client.get("/queue").text
@@ -131,6 +140,7 @@ def test_queue_lists_eligible_units(app_client):
 
 def test_queue_lists_live_leases(app_client):
     """console.QUEUE.2"""
+    # console.QUEUE.2
     client, store, profile = app_client
     _advance(store, profile)
     unit = coordinator.eligible(store, profile)[0]
@@ -142,6 +152,7 @@ def test_queue_lists_live_leases(app_client):
 
 def test_queue_lists_stranded_units(app_client):
     """console.QUEUE.3"""
+    # console.QUEUE.3
     client, store, profile = app_client
     _advance(store, profile)
     pipeline.set_phase(store, profile, "demo:demo", "implement", "blocked", actor="bot")
@@ -152,6 +163,7 @@ def test_queue_lists_stranded_units(app_client):
 
 def test_coordinator_page_shows_the_interval(app_client):
     """console.SETTINGS.1"""
+    # console.SETTINGS.1
     client, store, profile = app_client
     coordinator.set_interval(store, 120)
     body = client.get("/coordinator").text
@@ -160,6 +172,7 @@ def test_coordinator_page_shows_the_interval(app_client):
 
 def test_interval_submitted_from_the_page_is_persisted(app_client):
     """console.SETTINGS.2"""
+    # console.SETTINGS.2
     client, store, profile = app_client
     response = client.post(
         "/coordinator/settings",
@@ -173,6 +186,7 @@ def test_interval_submitted_from_the_page_is_persisted(app_client):
 
 def test_dispatch_can_be_disabled_from_the_page(app_client):
     """console.SETTINGS.3"""
+    # console.SETTINGS.3
     client, store, profile = app_client
     coordinator.set_dispatch_enabled(store, True)
     client.post("/coordinator/settings", data={"interval": "300", "concurrency": "1"})
@@ -181,6 +195,7 @@ def test_dispatch_can_be_disabled_from_the_page(app_client):
 
 def test_run_now_triggers_a_tick(app_client):
     """console.SETTINGS.4"""
+    # console.SETTINGS.4
     client, store, profile = app_client
     _advance(store, profile)
     coordinator.set_dispatch_enabled(store, True)
@@ -192,6 +207,7 @@ def test_run_now_triggers_a_tick(app_client):
 
 def test_activity_lists_events_newest_first(app_client):
     """console.ACTIVITY.1"""
+    # console.ACTIVITY.1
     client, store, _ = app_client
     body = client.get("/activity").text
     assert "ingest" in body
@@ -200,6 +216,7 @@ def test_activity_lists_events_newest_first(app_client):
 
 def test_an_event_names_its_kind_and_subject(app_client):
     """console.ACTIVITY.2"""
+    # console.ACTIVITY.2
     client, store, _ = app_client
     store.event("custom-kind", "custom-subject", "detail here")
     body = client.get("/activity").text
@@ -208,6 +225,7 @@ def test_an_event_names_its_kind_and_subject(app_client):
 
 def test_pages_render_without_javascript(app_client):
     """console.SAFARI.1"""
+    # console.SAFARI.1
     client, _, _ = app_client
     for path in ("/", "/queue", "/roster", "/coordinator", "/activity", "/features/demo:demo"):
         body = client.get(path).text
@@ -216,6 +234,7 @@ def test_pages_render_without_javascript(app_client):
 
 def test_targets_are_at_least_44_pixels(app_client):
     """console.SAFARI.2"""
+    # console.SAFARI.2
     from salt.api import HERE
 
     css = (HERE / "static" / "style.css").read_text()
@@ -224,6 +243,7 @@ def test_targets_are_at_least_44_pixels(app_client):
 
 def test_tables_collapse_below_900_pixels(app_client):
     """console.SAFARI.3"""
+    # console.SAFARI.3
     from salt.api import HERE
 
     css = (HERE / "static" / "style.css").read_text()
