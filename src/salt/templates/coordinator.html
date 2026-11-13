@@ -3,11 +3,15 @@
 {% block body %}
 <h1>Coordinator</h1>
 
+{% if saved %}
+  <p class="callout">Settings saved.</p>
+{% endif %}
+
 {% if result %}
   <section class="callout">
-    <h2>Last manual tick</h2>
+    <h2>Last tick</h2>
     <p>
-      enabled: <strong>{{ result.get('enabled') }}</strong> ·
+      dispatch {{ 'enabled' if result.get('enabled') else 'off' }} ·
       dispatched: {{ result.get('dispatched')|length }} ·
       finished: {{ result.get('finished')|length }} ·
       expired leases: {{ result.get('expired')|length }}
@@ -40,16 +44,17 @@
   </div>
 </form>
 <p class="muted">
-  Dispatch is off until you enable it. Last tick: {{ last_tick or 'never' }}.
+  Dispatch is off until you enable it. Last tick: {{ last_tick_friendly }}.
 </p>
 
 <form method="post" action="/coordinator/run-now">
-  <button type="submit">Run now</button>
+  <button type="submit">Run one tick</button>
 </form>
 <p class="muted">
-  The coordinator leases a unit, writes a brief, and starts that role's runner command
-  with <code>{brief}</code> replaced by the brief's path. A run exiting clean still has to
-  prove its phase with <code>salt prove</code>.
+  A tick expires lapsed leases and collects finished runs; it starts runners only when
+  dispatch is enabled. The coordinator leases a unit, writes a brief, and starts that
+  role's runner command with <code>{brief}</code> replaced by the brief's path. A run
+  exiting clean still has to prove its phase with <code>salt prove</code>.
 </p>
 
 <h2>Recent runs</h2>

@@ -81,6 +81,12 @@ def create_app(
             )
         return rows
 
+    def _friendly(ts: str | None) -> str:
+        """ISO-8601 in, something a human reads out."""
+        if not ts:
+            return "never"
+        return ts.replace("T", " ").replace("+00:00", " UTC")
+
     # -- pages ------------------------------------------------------------
     @app.get("/", response_class=HTMLResponse)
     # console.BOARD.1
@@ -180,6 +186,8 @@ def create_app(
                 request,
                 "coordinator",
                 last_tick=store.get_setting(coordinator.SETTING_LAST_TICK),
+                last_tick_friendly=_friendly(store.get_setting(coordinator.SETTING_LAST_TICK)),
+                saved=request.query_params.get("saved") == "1",
                 concurrency=coordinator.concurrency(store, profile),
                 runs=store.runs(20),
                 result=None,
@@ -201,7 +209,7 @@ def create_app(
             "coordinator",
             f"interval={interval}s concurrency={concurrency} enabled={enabled == 'on'}",
         )
-        return RedirectResponse(url="/coordinator", status_code=303)
+        return RedirectResponse(url="/coordinator?saved=1", status_code=303)
 
     @app.post("/coordinator/run-now", response_class=HTMLResponse)
     # console.SETTINGS.4
@@ -215,6 +223,8 @@ def create_app(
                 request,
                 "coordinator",
                 last_tick=store.get_setting(coordinator.SETTING_LAST_TICK),
+                last_tick_friendly=_friendly(store.get_setting(coordinator.SETTING_LAST_TICK)),
+                saved=False,
                 concurrency=coordinator.concurrency(store, profile),
                 runs=store.runs(20),
                 result=result,
